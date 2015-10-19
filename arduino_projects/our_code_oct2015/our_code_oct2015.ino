@@ -1,3 +1,5 @@
+// Cod Magician
+
 int MOTOR2_PIN1 = 3;
 int MOTOR2_PIN2 = 5;
 int MOTOR1_PIN1 = 6;
@@ -49,11 +51,11 @@ s4 = analogRead(4);
     go(-255,-255);
   }
   else if(s2 < 100){ // dc alb pe dreapta
-    go(-255, 255);
+    go(255, -255);
     
   }
   else if(s3 < 100){ // dc alb pe stg
-    go(255, -255);
+    go(-255, 255);
     
   }
   else if(s4 > 200){ // daca dusman pe teritoriu, da-l afara
@@ -65,6 +67,8 @@ s4 = analogRead(4);
     go(-255,255);
   }
   
+//  go(255, 255);
+//  Serial.println(s4);
 
 
 }
