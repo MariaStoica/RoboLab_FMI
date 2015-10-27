@@ -1,7 +1,7 @@
 // 26 Oct 2015
 // code for Andrei and Maria's prototype 1: Whiteboard - from SmartCardboard
 
-// !!! 1 !!!
+// !!! Attention 1 !!!
 // check motor pins so that the movements correspond to the code
 int MOTOR2_PIN1 = 5;
 int MOTOR2_PIN2 = 3;
@@ -10,8 +10,8 @@ int MOTOR1_PIN2 = 6;
 int color_threshold = 680; // a threshold between black and white according to the color sensors
 // senzorii distance - pe baterie - vad < 100 la nimic pana la 500 la distanta max a lui
 // senzorii distance - pe cablu - vad 150 la nimic
-// nu merge senzorul dreapta lateral !!!
-// senzorii coloare
+//PROBLEM 1: nu merge senzorul dreapta lateral !!!
+// senzorii coloare... sunt haotici
 
 static int distance_front, distance_left, distance_right;
 static int color_back, color_left, color_right;
@@ -36,6 +36,7 @@ void setup() {
 
   Serial.begin(9600);
 } // end of setup
+// -------------------------------------------
 
 // methods:
 // go(int speedLeft, int speedRight) // lowlevel method for interacting with the wheels
@@ -49,35 +50,25 @@ void setup() {
 // color_check()   // if it detects white it runs from it
 
 void loop() {
-
+  
+  // strategy:
+  // if on black then search for enemy
+  // else get back in ring
+  //
+  // search for enemy:
+  // if nobody then search
+  // else attack
+  
   read_sensors();
   //  Serial.println(distance_front);
   //  Serial.println(distance_left);
   //  Serial.println(distance_right);
-  Serial.println(distance_left);
-
-  // DETECT
-  //  if(distance_front > 180) // vede ceva in fata - <100 baterie - <180 cablu
-  //  {
-  ////    Serial.println(distance_front);
-  ////    charge();
-  //  }
-  if (distance_left > 250) // - <100 baterie - <180 cablu
+  
+  if(color_check() == true)
   {
-    turn_left(90); //TDOD: la 90 grade
-    //    charge(); //TODO: pana ajungi la enemy
+    search_for_enemy();
   }
-  // nu merge distante pe dreapta
-  //  else if(distance_right > 180) // - <100 baterie - <180 cablu
-  //  {
-  //    turn_right(90); //TDOD: la 90 grade
-  //    charge(); //TODO: pana ajungi la enemy
-  //  }
-  else
-  {
-    go(0, 0);
-  }
-
+  // else is tacked in the color_check()
 
 } // end of loop
 
@@ -88,8 +79,7 @@ void loop() {
 // additional methods
 // -------------------------------
 
-//TODO: defend algo
-//TODO: charge algo
+//DONE: detect algo
 //TODO: search algo
 
 void read_sensors() {
@@ -99,24 +89,53 @@ void read_sensors() {
   color_back     = analogRead(3);
   color_left     = analogRead(4);
   color_right    = analogRead(5);
+  
 } // end of read_sensors
 
-void color_check() {
+bool color_check() {
   if (color_left < color_threshold && color_right < color_threshold) {
     go_back();
+    return false;
   }
-  else if (color_left < color_threshold) {
+  if (color_left < color_threshold) {
     turn_right(90);
+    return false;
   }
-  else if (color_right < color_threshold) {
+  if (color_right < color_threshold) {
     turn_left(90);
+    return false;
   }
+  
+  return true;
   //TODO: not using color_back
-
 } // end of color_check
 
+void search_for_enemy(){
+  // DETECT // senzorii de distanta au prioritate egala
+  if(distance_front > 180) // vede ceva in fata - <100 baterie - <180 cablu
+  {
+    charge();
+  }
+  if (distance_left > 250) // - <100 baterie - <180 cablu
+  {
+    turn_left(90); //done: la 90 grade
+  }
+  // nu merge distante pe dreapta
+  //  if(distance_right > 180) // - <100 baterie - <180 cablu
+  //  {
+  //    turn_right(90); //TDOD: la 90 grade
+//  //    charge(); //TODO: pana ajungi la enemy
+  //  }
+  if(distance_front < 180 && distance_left < 250 && distance_right < 250) // daca nu vezi nimic
+  {
+//    go(0, 0); // seems corelated with problem 2
+      explore_front();
+  }
+
+} // end of search for enemy
+
 void go_back() {
-  go(-150, -150);
+  go(-255, -250);
 }
 
 void turn_right(int degrees) {
@@ -133,7 +152,7 @@ void turn_right(int degrees) {
 
 void turn_left(int degrees) {
   Serial.println("IN TURN  LEFT");
-  // dupa o vreme, doar intra in metoda dar nu mai intra in if-ul cu 90. si doar print in turn left si atat. fara sa se miste
+  //PROBLEM 2: dupa o vreme, doar intra in metoda dar nu mai intra in if-ul cu 90. si doar print in turn left si atat. fara sa se miste
   if (degrees == 90)
   {
     now = millis();
@@ -148,6 +167,15 @@ void turn_left(int degrees) {
 
 void explore_front() {
   go(150, 150);
+}
+
+void explore_angle(char* direct){
+  if(strcmp(direct,"left")){
+    go(150,160);
+  }
+  else if(strcmp(direct,"right")){
+    go(160,150);
+  }
 }
 
 void charge() {
@@ -172,3 +200,4 @@ void go(int speedLeft, int speedRight) {
     analogWrite(MOTOR2_PIN2, -speedRight);
   }
 } // end of go
+

@@ -1,0 +1,14 @@
+mini sumo code with listeners
+NOTES
+
+interfaces needed: Observer, Observee
+classes needed: the 6 sensors are Observers (class ColorSensor and class DistanceSensor). they call the robot which is an observee to take according action
+the classes will differentiate themselves by analog port id
+
+
+// what do the notifications from the sensors look like?
+* The 3 color sensors will notify when they detect white and the robot, depending on which sensor squeaked, will have to avoid white with appropriate direction. The alarm is for white.
+* Same for distance sensors. Each sensor squeak has a certain way of reaction. if front charge, if side, turn towards it facing it front. The alarm is for close.
+
+// why need listeners?
+Because I need to be interrupted from my searching loop. It's no use writing the same code which contains the main code in every while loop which would have a while loop which would have a while loop which would have ...
