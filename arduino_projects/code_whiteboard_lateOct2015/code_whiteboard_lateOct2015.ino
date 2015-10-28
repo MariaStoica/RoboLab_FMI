@@ -80,7 +80,7 @@ void loop() {
 // -------------------------------
 
 //DONE: detect algo
-//TODO: search algo
+//DONE: search algo
 
 void read_sensors() {
   distance_front = analogRead(0);
@@ -91,6 +91,10 @@ void read_sensors() {
   color_right    = analogRead(5);
   
 } // end of read_sensors
+
+// stangul alb 550, negru 1023 baterie
+// dreptul alb 30,  negru 1023 baterie
+// spate   alb 30,  negru 800  baterie
 
 bool color_check() {
   if (color_left < color_threshold && color_right < color_threshold) {
@@ -121,11 +125,11 @@ void search_for_enemy(){
     turn_left(90); //done: la 90 grade
   }
   // nu merge distante pe dreapta
-  //  if(distance_right > 180) // - <100 baterie - <180 cablu
-  //  {
-  //    turn_right(90); //TDOD: la 90 grade
-//  //    charge(); //TODO: pana ajungi la enemy
-  //  }
+  if(distance_right > 250) // - <100 baterie - <180 cablu
+  {
+    turn_right(90); //TDOD: la 90 grade
+  //charge(); //TODO: pana ajungi la enemy
+  }
   if(distance_front < 180 && distance_left < 250 && distance_right < 250) // daca nu vezi nimic
   {
 //    go(0, 0); // seems corelated with problem 2
@@ -135,34 +139,34 @@ void search_for_enemy(){
 } // end of search for enemy
 
 void go_back() {
-  go(-255, -250);
+  go(-255, -150);
 }
 
 void turn_right(int degrees) {
-  if (degrees == 90)
-  {
+//  if (degrees == 90)
+//  {
     now = millis();
-    while (millis() - now < 200) //  300 pe baterie. 550 pe cablu pt 255 speed
+    while (millis() - now < 100) //  300 pe baterie. 550 pe cablu pt 255 speed
     {
       // it is blind here - doesn't react to sensors
       go(-255, 255);
     }
-  }
+//  }
 }
 
 void turn_left(int degrees) {
   Serial.println("IN TURN  LEFT");
   //PROBLEM 2: dupa o vreme, doar intra in metoda dar nu mai intra in if-ul cu 90. si doar print in turn left si atat. fara sa se miste
-  if (degrees == 90)
-  {
+//  if (degrees == 90)
+//  {
     now = millis();
-    while (millis() - now < 200) //  300 pe baterie. 550 pe cablu pt 255 speed
+    while (millis() - now < 100) //  300 pe baterie. 550 pe cablu pt 255 speed
     {
       Serial.println("left");
       // it is blind here - doesn't react to sensors
       go(255, -255);
     }
-  }
+//  }
 }
 
 void explore_front() {
