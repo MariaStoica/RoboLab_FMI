@@ -8,6 +8,8 @@ int MOTOR2_PIN2 = 3;
 int MOTOR1_PIN1 = 9;
 int MOTOR1_PIN2 = 6;
 int color_threshold = 680; // a threshold between black and white according to the color sensors
+int distance_front_threshold = 180;
+int distance_side_threshold = 250;
 // senzorii distance - pe baterie - vad < 100 la nimic pana la 500 la distanta max a lui
 // senzorii distance - pe cablu - vad 150 la nimic
 //PROBLEM 1: nu merge senzorul dreapta lateral !!!
@@ -116,21 +118,21 @@ bool color_check() {
 
 void search_for_enemy(){
   // DETECT // senzorii de distanta au prioritate egala
-  if(distance_front > 180) // vede ceva in fata - <100 baterie - <180 cablu
+  if(distance_front > distance_front_threshold) // vede ceva in fata - <100 baterie - <180 cablu
   {
     charge();
   }
-  if (distance_left > 250) // - <100 baterie - <180 cablu
+  if (distance_left > distance_side_threshold) // - <100 baterie - <180 cablu
   {
     turn_left(90); //done: la 90 grade
   }
   // nu merge distante pe dreapta
-  if(distance_right > 250) // - <100 baterie - <180 cablu
+  if(distance_right > distance_side_threshold) // - <100 baterie - <180 cablu
   {
     turn_right(90); //TDOD: la 90 grade
   //charge(); //TODO: pana ajungi la enemy
   }
-  if(distance_front < 180 && distance_left < 250 && distance_right < 250) // daca nu vezi nimic
+  if(distance_front < distance_front_threshold && distance_left < distance_side_threshold && distance_right < distance_side_threshold) // daca nu vezi nimic
   {
 //    go(0, 0); // seems corelated with problem 2
       explore_front();
