@@ -21,12 +21,12 @@ void setup() {
   pinMode(MOTOR2_PIN2, OUTPUT);
 
   // setam sloturile pentru input de la sezori
-  pinMode(s0, INPUT);
-  pinMode(s1, INPUT);
-  pinMode(s2, INPUT);
-  pinMode(s3, INPUT);
-  pinMode(s4, INPUT);
-  pinMode(s5, INPUT);
+  pinMode(0, INPUT);
+  pinMode(1, INPUT);
+  pinMode(2, INPUT);
+  pinMode(3, INPUT);
+  pinMode(4, INPUT);
+  pinMode(5, INPUT);
 
   Serial.begin(9600);
 }
@@ -35,21 +35,21 @@ void loop() {
   // put your main code here, to run repeatedly:
 
 s0 = analogRead(0);
-s1 = analogRead(1);
-s2 = analogRead(2);
-s3 = analogRead(3);
-s4 = analogRead(4);
+s1 = analogRead(2);
+s2 = analogRead(4);
+s3 = analogRead(1);
+s4 = analogRead(3);
 s5 = analogRead(5);
 
 //  Serial.println(s0);
 //  Serial.println(s1);
 //  Serial.println(s2);
-  Serial.println(s3);
+//  Serial.println(s3);
 //  Serial.println(s4);
 //  Serial.println(s5);
 //  delay(500);
 
-//go(100,100);
+go(100,100);
 
 //  if(s4 < 700 && s5 < 700){ // alb fata complet
 //    go(-100,-100);

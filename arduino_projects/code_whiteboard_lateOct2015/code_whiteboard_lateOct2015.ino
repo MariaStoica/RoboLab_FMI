@@ -9,7 +9,7 @@ int MOTOR1_PIN1 = 9;
 int MOTOR1_PIN2 = 6;
 int color_threshold = 700; // a threshold between black and white according to the color sensors
 int distance_front_threshold = 180;
-int distance_side_threshold = 250;
+int distance_side_threshold = 150;
 // senzorii distance - pe baterie - vad < 100 la nimic pana la 500 la distanta max a lui
 // senzorii distance - pe cablu - vad 150 la nimic
 // nu merge senzorul dreapta lateral !!! // vezi fire
@@ -76,10 +76,61 @@ void loop() {
   //  Serial.println(distance_left);
   //  Serial.println(distance_right);
     
-  if(color_check() == true)
-  {
-    search_for_enemy();
+  if (color_left < color_threshold && color_right < color_threshold) {
+//    Serial.println("SEE BOTH");
+    go(-255, -100);
+    go(-255, -100);
+//    go_back();
   }
+  else if (color_left < color_threshold) {
+//    Serial.println("SEE LEFT");
+    go(-255, 255);
+    go(-255, 255);
+//    turn_right(90);
+  }
+  else if (color_right < color_threshold) {
+//    Serial.println("SEE RIGHT");
+    go(255, -255);
+    go(255, -255);
+//    turn_left(90);
+  }
+  else
+  {
+//    Serial.println("EXPLORE");
+//    explore_front();
+//    go(150, 150);
+  // DETECT // senzorii de distanta au prioritate egala
+    if(distance_front > distance_front_threshold) // vede ceva in fata - <100 baterie - <180 cablu
+    {
+      go(255,255);
+    }
+    if (distance_left > distance_side_threshold) // - <100 baterie - <180 cablu
+    {
+      go(255, -255);
+      go(255, -255);
+      go(255, -255);
+      go(255, -255);
+    }
+    // nu merge distante pe dreapta
+    if(distance_right > distance_side_threshold) // - <100 baterie - <180 cablu
+    {
+      go(-255, 255);
+      go(-255, 255);
+      go(-255, 255);
+      go(-255, 255);
+    }
+    if(distance_front < distance_front_threshold && distance_left < distance_side_threshold && distance_right < distance_side_threshold) // daca nu vezi nimic
+    {
+      go(150,150);
+    }
+  }
+    
+    
+//  if(color_check() == true)
+//  {
+////    search_for_enemy();
+//      explore_front();
+//  }
   // else is tacked in the color_check()
 
 } // end of loop
@@ -114,10 +165,12 @@ bool color_check() {
     return false;
   }
   if (color_left < color_threshold) {
+    Serial.println("SEE LEFT");
     turn_right(90);
     return false;
   }
   if (color_right < color_threshold) {
+    Serial.println("SEE RIGHT");
     turn_left(90);
     return false;
   }
@@ -151,7 +204,13 @@ void search_for_enemy(){
 } // end of search for enemy
 
 void go_back() {
-  go(-255, -150);
+  now = millis();
+  while (millis() - now < 100) //  300 pe baterie. 550 pe cablu pt 255 speed
+  {
+    Serial.println("back");
+    // it is blind here - doesn't react to sensors
+    go(-255, -150);
+  }
 }
 
 void turn_right(int degrees) {
@@ -160,6 +219,7 @@ void turn_right(int degrees) {
     now = millis();
     while (millis() - now < 100) //  300 pe baterie. 550 pe cablu pt 255 speed
     {
+      Serial.println("right");
       // it is blind here - doesn't react to sensors
       go(-255, 255);
     }
@@ -167,7 +227,6 @@ void turn_right(int degrees) {
 }
 
 void turn_left(int degrees) {
-  Serial.println("IN TURN  LEFT");
   //PROBLEM 2: dupa o vreme, doar intra in metoda dar nu mai intra in if-ul cu 90. si doar print in turn left si atat. fara sa se miste
 //  if (degrees == 90)
 //  {
@@ -182,6 +241,7 @@ void turn_left(int degrees) {
 }
 
 void explore_front() {
+  Serial.println("explore front");
   go(150, 150);
 }
 
