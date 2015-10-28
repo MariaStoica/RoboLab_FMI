@@ -7,12 +7,12 @@ int MOTOR2_PIN1 = 5;
 int MOTOR2_PIN2 = 3;
 int MOTOR1_PIN1 = 9;
 int MOTOR1_PIN2 = 6;
-int color_threshold = 680; // a threshold between black and white according to the color sensors
+int color_threshold = 700; // a threshold between black and white according to the color sensors
 int distance_front_threshold = 180;
 int distance_side_threshold = 250;
 // senzorii distance - pe baterie - vad < 100 la nimic pana la 500 la distanta max a lui
 // senzorii distance - pe cablu - vad 150 la nimic
-//PROBLEM 1: nu merge senzorul dreapta lateral !!!
+// nu merge senzorul dreapta lateral !!! // vezi fire
 // senzorii coloare... sunt haotici
 
 static int distance_front, distance_left, distance_right;
@@ -29,12 +29,19 @@ void setup() {
   pinMode(MOTOR2_PIN2, OUTPUT);
 
   // setam sloturile pentru input de la sezori
-  pinMode(distance_front, INPUT);
-  pinMode(distance_left, INPUT);
-  pinMode(distance_right, INPUT);
-  pinMode(color_back, INPUT);
-  pinMode(color_left, INPUT);
-  pinMode(color_right, INPUT);
+//  pinMode(distance_front, INPUT);
+//  pinMode(distance_left, INPUT);
+//  pinMode(distance_right, INPUT);
+//  pinMode(color_back, INPUT);
+//  pinMode(color_left, INPUT);
+//  pinMode(color_right, INPUT);
+
+  pinMode(0, INPUT);
+  pinMode(1, INPUT);
+  pinMode(2, INPUT);
+  pinMode(3, INPUT);
+  pinMode(4, INPUT);
+  pinMode(5, INPUT);
 
   Serial.begin(9600);
 } // end of setup
@@ -53,6 +60,9 @@ void setup() {
 
 void loop() {
   
+  // !!! el face comanda data pana cand intra pe alt if
+  // daca iese din if si nu intalneste alte comenzi el tot pe aia de la ultimul if o s-o tina
+  
   // strategy:
   // if on black then search for enemy
   // else get back in ring
@@ -65,7 +75,7 @@ void loop() {
   //  Serial.println(distance_front);
   //  Serial.println(distance_left);
   //  Serial.println(distance_right);
-  
+    
   if(color_check() == true)
   {
     search_for_enemy();
@@ -86,10 +96,10 @@ void loop() {
 
 void read_sensors() {
   distance_front = analogRead(0);
-  distance_left  = analogRead(1);
-  distance_right = analogRead(2);
-  color_back     = analogRead(3);
-  color_left     = analogRead(4);
+  distance_left  = analogRead(2);
+  distance_right = analogRead(4);
+  color_back     = analogRead(1);
+  color_left     = analogRead(3);
   color_right    = analogRead(5);
   
 } // end of read_sensors
